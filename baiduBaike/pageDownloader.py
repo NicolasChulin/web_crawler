@@ -1,0 +1,3 @@
+
+def getPageContent(url):
+    pass
