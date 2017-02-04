@@ -1,4 +1,4 @@
-
+from bs4 import BeautifulSoup
 
 def parseHtml(html):
-    pass
+    htms = BeautifulSoup(htmStr,'html.parser')

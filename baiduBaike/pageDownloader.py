@@ -1,3 +1,7 @@
 
+import requests
+
+
 def getPageContent(url):
-    pass
+    response = requests.get(url)
+    return response.text

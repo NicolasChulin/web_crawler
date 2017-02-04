@@ -19,6 +19,18 @@ class Pydb(object):
             'cursorclass':pymysql.cursors.DictCursor
         }
 
+    def get_wheres(self,whered):
+        wheres = []
+        for k,v in whered.items():
+            wheres.append("%s='%s'" % (k,v))
+        return ' and '.join(wheres)
+
+    def get_sets(self,setd):
+        sets = []
+        for k,v in setd.items():
+            sets.append("%s='%s'" % (k,v))
+        return ','.join(sets)
+
     def connect(self,db_name=None):
         config = self.get_config(db_name)
         self.conn = pymysql.connect(**config)
@@ -28,33 +40,44 @@ class Pydb(object):
         self.cursor.close()
         self.conn.close()
 
-    def create(self,data,tb_name):
+    def commit(self,sql):
+        try:
+            self.cursor.execute(sql)
+            self.conn.commit()
+        except:
+            self.conn.rollback()
+
+    def filter(self,tb_name,whered):
+        wheres = self.get_wheres(whered)
+        sql="SELECT * FROM %s WHERE %s" % (tb_name,wheres)
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
+
+    def create(self,tb_name,data):
         keys=[]
         values=[]
         for k,v in data.items():
             keys.append(k)
             values.append(v)
         sql="INSERT INTO %s (%s) VALUES (%s)" % (tb_name,','.join(keys),','.join(values))
+        self.commit(sql)
+
+    def update(self,tb_name,setd,whered):
+        sets = self.get_sets(setd)
+        wheres = self.get_wheres(whered)
+        sql="UPDATE %s SET %s WHERE %s" % (tb_name,sets,wheres)
+        self.commit(sql)
+
+    def delete(self,tb_name,whered):
+        wheres = self.get_wheres(whered)
+        sql="DELETE FROM %s WHERE %s" % (tb_name,wheres)
+        self.commit(sql)
+
+    def get_first_item(self,tb_name,whered):
+        wheres = self.get_wheres(whered)
+        sql="SELECT * FROM %s WHERE %s ORDER BY id desc LIMIT 1" % (tb_name,wheres)
         self.cursor.execute(sql)
-
-    def update(self,setd,whered,tb_name):
-        sets = []
-        wheres = []
-        for k,v in setd.items():
-            sets.append("%s='%s'" % (k,v))
-        for k,v in whered.items():
-            wheres.append("%s='%s'" % (k,v))
-
-        sql="UPDATE %s SET %s WHERE %s" % (tb_name,','.join(sets),' and '.join(wheres))
-        self.cursor.execute(sql)
-
-    def delete(self,whered,db_name):
-        wheres = []
-        for k,v in whered.items():
-            wheres.append("%s='%s'" % (k,v))
-
-        sql="DELETE FROM %s WHERE %s" % (tb_name,' and '.join(wheres))
-        self.cursor.execute(sql)
+        return self.cursor.fetchall()
 
 
 
