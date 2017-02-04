@@ -4,6 +4,11 @@ from datetime import datetime
 def hasNewUrl():
     db = Pydb()
     table = 'web_urls'
+    count = db.get_count(table)
+    if count['num'] >= 100:
+        db.close()
+        return False
+
     whered = {
         'is_crawler':'0'
     }

@@ -11,10 +11,10 @@ def baiduBaike():
     pageParserCont = pageParser.parseHtml(pageCont)
     application.saveValueCont(pageParserCont['cont'])
     urlManager.addNewUrls(pageParserCont['urls'])
-    baiduBaike()
+    # baiduBaike()
 
 
 if __name__ == '__main__':
-    url = 'https://www.baidu.com'
+    url = 'http://baike.baidu.com/view/3898928.htm'
     urlManager.addNewUrls([url])
     baiduBaike()

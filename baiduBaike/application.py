@@ -2,4 +2,4 @@
 
 def saveValueCont(cont):
 
-    pass
+    return

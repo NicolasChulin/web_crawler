@@ -79,6 +79,17 @@ class Pydb(object):
         self.cursor.execute(sql)
         return self.cursor.fetchall()
 
+    def get_count(self,tb_name,whered=None):
+        if whered is None:
+            sql="SELECT COUNT(1) AS num FROM %s" % (tb_name)
+        else:
+            wheres = self.get_wheres(whered)
+            sql="SELECT COUNT(1) AS num FROM %s WHERE %s" % (tb_name,wheres)
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
+
+
+
 
 
 
