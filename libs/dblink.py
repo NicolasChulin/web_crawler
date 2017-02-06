@@ -65,7 +65,6 @@ class Pydb(object):
             keys.append(k)
             values.append('"%s"' % v)
         sql="INSERT INTO %s (%s) VALUES (%s)" % (tb_name,','.join(keys),','.join(values))
-        print(sql)
         self.commit(sql)
 
     def update(self,tb_name,setd,whered):

@@ -4,7 +4,6 @@ from pageDownloader import getPageContent
 from pageParser import parseHtml
 from application import saveValueCont
 import json
-import chardet
 
 def baiduBaike():
     newUrl = hasNewUrl()
