@@ -1,20 +1,25 @@
 import pymysql
-from web_crawler import setting
 
+DEFAULT_DB = {
+    'NAME': 'webcrawler',
+    'HOST': 'localhost',
+    'PORT': 3306,
+    'USER': 'root',
+    'PASSWORD': 'root'
+}
 
 class Pydb(object):
 
     def __init__(self,db_name=None):
         self.connect(db_name)
-        super(Pydb,self).__init__(db_name)
 
     def get_config(self,db_name=None):
         return {
-            'host': setting.HOST,
-            'port': setting.PORT,
-            'user': setting.USER,
-            'passwd': setting.PASSWORD,
-            'db':db_name if db_name else setting.NAME,
+            'host': DEFAULT_DB['HOST'],
+            'port': DEFAULT_DB['PORT'],
+            'user': DEFAULT_DB['USER'],
+            'passwd': DEFAULT_DB['PASSWORD'],
+            'db':db_name if db_name else DEFAULT_DB['NAME'],
             'charset':'utf8mb4',
             'cursorclass':pymysql.cursors.DictCursor
         }
@@ -58,8 +63,9 @@ class Pydb(object):
         values=[]
         for k,v in data.items():
             keys.append(k)
-            values.append(v)
+            values.append('"%s"' % v)
         sql="INSERT INTO %s (%s) VALUES (%s)" % (tb_name,','.join(keys),','.join(values))
+        print(sql)
         self.commit(sql)
 
     def update(self,tb_name,setd,whered):
@@ -77,7 +83,7 @@ class Pydb(object):
         wheres = self.get_wheres(whered)
         sql="SELECT * FROM %s WHERE %s ORDER BY id desc LIMIT 1" % (tb_name,wheres)
         self.cursor.execute(sql)
-        return self.cursor.fetchall()
+        return self.cursor.fetchall()[0]
 
     def get_count(self,tb_name,whered=None):
         if whered is None:
@@ -86,7 +92,7 @@ class Pydb(object):
             wheres = self.get_wheres(whered)
             sql="SELECT COUNT(1) AS num FROM %s WHERE %s" % (tb_name,wheres)
         self.cursor.execute(sql)
-        return self.cursor.fetchall()
+        return self.cursor.fetchall()[0]
 
 
 

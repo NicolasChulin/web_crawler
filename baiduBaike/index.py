@@ -1,20 +1,25 @@
 
-from baiduBaike import urlManager,pageDownloader,pageParser,application
-
+from urlManager import hasNewUrl,addNewUrls
+from pageDownloader import getPageContent
+from pageParser import parseHtml
+from application import saveValueCont
+import json
+import chardet
 
 def baiduBaike():
-    newUrl = urlManager.hasNewUrl()
+    newUrl = hasNewUrl()
     if not newUrl:
         return False
 
-    pageCont = pageDownloader.getPageContent(newUrl)
-    pageParserCont = pageParser.parseHtml(pageCont)
-    application.saveValueCont(pageParserCont['cont'])
-    urlManager.addNewUrls(pageParserCont['urls'])
+    pageCont = getPageContent(newUrl)
+    pageParserCont = parseHtml(pageCont)
+    # print(pageParserCont)
+    # saveValueCont(pageParserCont['cont'])
+    # addNewUrls(pageParserCont['urls'])
     # baiduBaike()
 
 
 if __name__ == '__main__':
     url = 'http://baike.baidu.com/view/3898928.htm'
-    urlManager.addNewUrls([url])
+    addNewUrls([url])
     baiduBaike()

@@ -1,3 +1,4 @@
+import __init__
 from libs.dblink import Pydb
 from datetime import datetime
 
@@ -12,7 +13,7 @@ def hasNewUrl():
     whered = {
         'is_crawler':'0'
     }
-    newurl = bd.get_first_item(table,whered)
+    newurl = db.get_first_item(table,whered)
     if newurl:
         whered = {
             'id':newurl['id']
@@ -20,7 +21,7 @@ def hasNewUrl():
         setd = {
             'is_crawler':'1'
         }
-        bd.update(table,setd,whered)
+        # db.update(table,setd,whered)
         db.close()
         return newurl['url']
     else:
@@ -39,10 +40,9 @@ def addNewUrls(urls):
         else:
             data = {
                 'url':url,
-                'created_at':datetime.now()
+                'created_at':datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             db.create(table,data)
-
     db.close()
 
 
